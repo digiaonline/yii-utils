@@ -1,0 +1,12 @@
+{
+    "name": "nordsoftware/yii-utils",
+    "description": "Utility classes for the Yii PHP framework.",
+    "authors": [
+        {
+            "name": "Christoffer Niska",
+            "email": "christoffer.niska@nordsoftware.com"
+        }
+    ],
+    "require": {
+    }
+}
