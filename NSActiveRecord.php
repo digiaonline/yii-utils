@@ -21,6 +21,17 @@ abstract class NSActiveRecord extends CActiveRecord {
 
 	private $_deleted = false;
 
+	public function behaviors() {
+		return array(
+			'formatter' => array(
+				'class' => 'vendor.crisu83.yii-formatter.behaviors.FormatterBehavior',
+				'formatters' => array(
+					'dateTime' => array('dateWidth' => 'short', 'timeWidth' => 'short'),
+				),
+			),
+		);
+	}
+
 	/**
 	 * Returns the default named scope that should be implicitly applied to all queries for this model.
 	 * @return array the query criteria.
@@ -83,7 +94,7 @@ abstract class NSActiveRecord extends CActiveRecord {
 	public function attributeLabels() {
 		return array(
 			'created' => Yii::t('label', 'Created'),
-			'updated' => Yii::t('label', 'Updated'),
+			'updated' => Yii::t('label', 'Last edit'),
 			'deleted' => Yii::t('label', 'Deleted'),
 			'status' => Yii::t('label', 'Status'),
 		);
@@ -95,5 +106,9 @@ abstract class NSActiveRecord extends CActiveRecord {
 	 */
 	public static function getSelectOptions() {
 		return CHtml::listData(static::model()->findAll(), 'id', 'name');
+	}
+
+	public function getFormatter() {
+		return $this->asa('NSFormatter');
 	}
 }
