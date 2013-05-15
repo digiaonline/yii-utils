@@ -19,8 +19,10 @@ abstract class NSActiveRecord extends CActiveRecord {
 	const STATUS_DELETED = -1;
 	const STATUS_DEFAULT = 0;
 
-	private $_deleted = false;
-
+	/**
+	 * Returns a list of behaviors that this model should behave as.
+	 * @return array the behavior configurations (behavior name=>behavior configuration)
+	 */
 	public function behaviors() {
 		return array(
 			'formatter' => array(
@@ -53,20 +55,17 @@ abstract class NSActiveRecord extends CActiveRecord {
 	 * @return boolean whether the saving should be executed. Defaults to true.
 	 */
 	protected function beforeSave() {
-		if (parent::beforeSave()) {
-			if ($this->isNewRecord) {
-				if ($this->hasAttribute('created')) {
-					$this->created = new CDbExpression('NOW()');
-				}
-			} else {
-				unset($this->created); // make sure that we do not change these
-				if (!$this->_deleted && $this->hasAttribute('updated')) {
-					$this->updated = new CDbExpression('NOW()');
-				}
+		if ($this->isNewRecord) {
+			if ($this->hasAttribute('created')) {
+				$this->created = date('Y-m-d H:i:s');
 			}
-			return true;
+		} else {
+			unset($this->created); // make sure that we do not change this
+			if ($this->hasAttribute('updated')) {
+				$this->updated = date('Y-m-d H:i:s');
+			}
 		}
-		return false;
+		return parent::beforeSave(); // parent method must be called here in order for the audit behavior to work
 	}
 
 	/**
@@ -76,14 +75,13 @@ abstract class NSActiveRecord extends CActiveRecord {
 	protected function beforeDelete() {
 		if (parent::beforeDelete()) {
 			if ($this->hasAttribute('deleted')) {
-				$this->deleted = new CDbExpression('NOW()');
+				$this->deleted = date('Y-m-d H:i:s');
 			}
 			if ($this->hasAttribute('status')) {
 				$this->status = self::STATUS_DELETED;
+				$this->save(false);
+				return false; // Prevent actual DELETE query from being run
 			}
-			$this->_deleted = true;
-			$this->save(false);
-			return false; // Prevent actual DELETE query from being run
 		}
 		return true;
 	}
