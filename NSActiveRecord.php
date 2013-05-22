@@ -60,7 +60,6 @@ abstract class NSActiveRecord extends CActiveRecord {
 				$this->created = date('Y-m-d H:i:s');
 			}
 		} else {
-			unset($this->created); // make sure that we do not change this
 			if ($this->hasAttribute('updated')) {
 				$this->updated = date('Y-m-d H:i:s');
 			}
@@ -104,9 +103,5 @@ abstract class NSActiveRecord extends CActiveRecord {
 	 */
 	public static function getSelectOptions() {
 		return CHtml::listData(static::model()->findAll(), 'id', 'name');
-	}
-
-	public function getFormatter() {
-		return $this->asa('NSFormatter');
 	}
 }
