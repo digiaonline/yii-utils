@@ -68,24 +68,6 @@ abstract class NSActiveRecord extends CActiveRecord {
 	}
 
 	/**
-	 * This method is invoked before deleting a record.
-	 * @return boolean whether the record should be deleted. Defaults to true.
-	 */
-	protected function beforeDelete() {
-		if (parent::beforeDelete()) {
-			if ($this->hasAttribute('deleted')) {
-				$this->deleted = date('Y-m-d H:i:s');
-			}
-			if ($this->hasAttribute('status')) {
-				$this->status = self::STATUS_DELETED;
-				$this->save(false);
-				return false; // Prevent actual DELETE query from being run
-			}
-		}
-		return true;
-	}
-
-	/**
 	 * @return array customized attribute labels (name=>label)
 	 */
 	public function attributeLabels() {
